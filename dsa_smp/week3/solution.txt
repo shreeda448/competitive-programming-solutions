@@ -1,0 +1,262 @@
+Problem 1 : Length of list
+
+int getCount(struct Node* head) {
+    // code here
+    int length = 0;
+    struct Node *curNode = head;
+    while(curNode!=NULL){
+        length++;
+        curNode = curNode->next;
+    }
+    return length;
+}
+
+Problem 2 : LL Cycle
+
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    bool hasCycle(ListNode *head) {
+       map<ListNode *,bool>mp;
+       ListNode *curNode = head;
+       while(curNode!=NULL){
+            if(mp.find(curNode)!=mp.end()){
+                return true;
+            }else{
+                mp[curNode]  = true;
+            }
+            curNode = curNode->next;
+       }
+       return false;
+    }
+};
+
+Problem 3 : Reverse a DLL
+
+/* Structure of doubly linked list node
+class Node {
+  public:
+    int data;
+    Node *next;
+    Node *prev;
+
+    Node(int val) {
+        data = val;
+        next = nullptr;
+        prev = nullptr;
+    }
+};
+
+*/
+class Solution {
+      public:
+    Node *reverse(Node *head) {
+        // code here
+        // Code here
+    struct Node* newHead = head;
+    struct Node* ans = head;
+    if(newHead==nullptr)return nullptr;
+    while(newHead !=nullptr){
+        swap(newHead->prev,newHead->next);
+        if(newHead->prev==nullptr)
+        ans = newHead;
+        newHead=newHead->prev;
+    }
+    return ans;
+    }
+};
+
+Problem  4 : Palindrome
+
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+public:
+    bool isPalindrome(ListNode* head) {
+        int len = 0;
+        vector<int>val;
+        ListNode* curNode = head;
+        while(curNode!=nullptr){
+            len++;
+            val.push_back(curNode->val);
+            curNode = curNode->next;
+        }
+        
+        for(int i = 0;i<len;i++){
+            if(val[i]!=val[len-1-i]){
+                return false;
+            }
+        }
+        return true;
+    }
+};
+
+Problem  5 : Sort LL
+
+/* Node is defined as
+  class Node {
+  public:
+    int data;
+    Node* next;
+
+    Node(int x) {
+        data = x;
+        next = nullptr;
+    }
+};
+*/
+class Solution {
+  public:
+    Node* segregate(Node* head) {
+        // code here
+        Node*  temp = head;
+        int zero =  0,one  = 0,two = 0;
+        while(temp!=nullptr){
+            switch(temp->data){
+                case 0:zero++;break;
+                case 1:one++;break;
+                case 2:two++;break;
+            }
+            temp = temp->next;
+        }
+        Node*  cur = head;
+        while(cur!=nullptr){
+            if(zero>0){
+                cur->data = 0;
+                zero--;
+            }else if(one>0){
+                cur->data = 1;
+                one--;
+            }else  if(two>0){
+                cur->data = 2;
+                two--;
+            }
+            cur=cur->next;
+        }
+        return head;
+    }
+};
+
+Problem 6 : ReverseK group
+
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+public:
+    void reverse(ListNode*& head) {
+        ListNode* curr = head;
+        ListNode* prev = NULL;
+        while (curr) {
+            ListNode* nxt = curr->next;
+            curr->next = prev;
+            prev = curr;
+            curr = nxt;
+        }
+        head = prev;
+    }
+    ListNode* reverseKGroup(ListNode* head, int k) {
+        ListNode* counter=head;
+        int count=0;
+        while (counter!=NULL) {
+            counter=counter->next;
+            count++;
+        }
+        ListNode* prev=NULL;
+        ListNode* temp2=head;
+        for (int i=0;i<count/k;i++){
+            ListNode* temp3=temp2;
+            ListNode* temp4=temp2;
+            for(int i=0;i<k-1;i++){
+                temp2=temp2->next;
+            }
+            ListNode* nxt=temp2->next;
+            temp2->next=NULL;
+            reverse(temp3);
+            if(i==0) {
+                head=temp3;
+            }
+            temp2=temp4;
+            temp2->next=nxt;
+            if (prev!=NULL) {
+                prev->next=temp3;
+            }
+            prev=temp2;
+            temp2=temp2->next;
+        }
+        return head;
+    }
+
+}
+;
+
+Problem 7 : rotate list
+
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* rotateRight(ListNode* head, int k) {
+        if (!head || !head->next || k == 0) {
+            return head;
+        }
+        int len = 0;
+        ListNode* temp = head;
+        ListNode* last;
+        while (temp) {
+            len++;
+            if (temp->next == nullptr) {
+                last = temp;
+            }
+            temp = temp->next;
+        }
+        k = k % len;
+        if (k == 0) {
+            return head; 
+        }
+        temp = head;
+        last->next = head;
+        int cnt = 0;
+        ListNode* ans;
+        while (true) {
+            cnt++;
+            if (cnt == len - k) {
+                ans = temp->next;
+                temp->next = nullptr;
+                break;
+            }
+            temp = temp->next;
+        }
+        return ans;
+    }
+};

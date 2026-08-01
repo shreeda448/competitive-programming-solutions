@@ -1,0 +1,368 @@
+Problem 1 : Valid parenthesis
+
+class Solution {
+public:
+    bool isValid(string s) {
+        stack<char>stk;
+        for(char ch:s){
+            if(ch=='('||ch=='{'||ch=='['){
+                stk.push(ch);
+            }else{
+                if(stk.empty()){
+                    return false;
+                }
+                if(stk.top()=='('&& ch==')'){
+                    stk.pop();
+                }else if(stk.top()=='{'&& ch=='}'){
+                    stk.pop();
+                }else if(stk.top()=='['&& ch==']'){
+                    stk.pop();
+                }else{
+                    return false;
+                }
+            }
+        }
+        if(!stk.empty()){
+            return false;
+        }
+        return true;
+    }
+};
+
+Problem 2 : Implement Queue using stacks
+
+class MyQueue {
+public:
+    
+    
+    void push(int x) {
+          in_stk.push(x);
+    }
+    
+    int pop() {
+       peek();
+        const int val = out_stk.top();
+        out_stk.pop();
+        return val;  
+    }
+    
+    int peek() {
+        if (out_stk.empty())
+        while (!in_stk.empty())
+            out_stk.push(in_stk.top()), in_stk.pop();
+        return out_stk.top();
+    }
+    
+    bool empty() {
+         return in_stk.empty() && out_stk.empty();
+    }
+    private:
+    stack<int> in_stk;
+    stack<int> out_stk;
+};
+
+/**
+ * Your MyQueue object will be instantiated and called as such:
+ * MyQueue* obj = new MyQueue();
+ * obj->push(x);
+ * int param_2 = obj->pop();
+ * int param_3 = obj->peek();nextGreaterElement
+ * bool param_4 = obj->empty();
+ */
+
+Problem 3 : Next Greater Element 1
+
+class Solution {
+public:
+    vector<int> nextGreaterElement(vector<int>& nums1, vector<int>& nums2) {
+      map<int,int>next;
+      stack<int>s;
+      for(int i =nums2.size()-1;i>=0;--i){
+        while(!s.empty()&&s.top()<=nums2[i]){
+            s.pop();
+        }
+        next[nums2[i]] = s.empty()?-1:s.top();
+        s.push(nums2[i]);
+      }  
+      vector<int>res;
+      for(int num:nums1){
+        res.push_back(next[num]);
+      }
+      return res;
+    }
+};
+
+Problem 4 : Min Stack
+
+class MinStack {
+private:
+    std::stack<int> main_stk;
+    std::stack<int> min_stk;
+
+public:
+    MinStack() {}
+
+    void push(int value) {
+        main_stk.push(value);
+        if (min_stk.empty() || value <= min_stk.top()) {
+            min_stk.push(value);
+        } else {
+            min_stk.push(min_stk.top());
+        }
+    }
+
+    void pop() {
+        if (main_stk.empty()) {
+            throw std::runtime_error(
+                "Stack underflow: Cannot pop from an empty stack.");
+        }
+        main_stk.pop();
+        min_stk.pop();
+    }
+
+    int top() {
+        if (main_stk.empty()) {
+            throw std::runtime_error("Stack is empty: No top element.");
+        }
+        return main_stk.top();
+    }
+
+    int getMin() {
+        if (min_stk.empty()) {
+            throw std::runtime_error("Stack is empty: No minimum element.");
+        }
+        return min_stk.top();
+    }
+};
+
+/**
+ * Your MinStack object will be instantiated and called as such:
+ * MinStack* obj = new MinStack();
+ * obj->push(value);
+ * obj->pop();
+ * int param_3 = obj->top();
+ * int param_4 = obj->getMin();
+ */
+
+Problem 5 : Daily Temperatures
+
+class Solution {
+public:
+    vector<int> dailyTemperatures(vector<int>& temp) {
+        stack<pair<int, int>> stk;
+        int n = temp.size();
+        vector<int> ans(n);
+        for (int i = n - 1; i >= 0;) {
+            int count = 1;
+            if (!stk.empty() && stk.top().first > temp[i]) {
+                ans[i] = stk.top().second - i;
+                stk.push({temp[i], i});
+                continue;
+            }
+            while (!stk.empty() && stk.top().first <= temp[i]) {
+                count++;
+                stk.pop();
+            }
+            if (stk.empty() == true) {
+                ans[i] = 0;
+                stk.push({temp[i], i});
+            } else {
+                ans[i] = stk.top().second - i;
+                stk.push({temp[i], i});
+            }
+            i--;
+        }
+        return ans;
+    }
+};
+
+Problem 6 : Sliding Window  Maximum
+
+class Solution {
+public:
+    vector<int> maxSlidingWindow(vector<int>& nums, int k) {
+        int n = nums.size();
+        vector<int>ans;
+        vector<int>prefix_max(n);
+        vector<int>suffix_max(n);
+        for(int i =0;i<n;i++){
+            if(i%k==0){
+                prefix_max[i] = nums[i];
+            }else{
+                prefix_max[i] = max(prefix_max[i-1],nums[i]);
+            }
+        }
+        for(int i=n-1;i>=0;--i){
+            if(i==n-1 || (i+1)%k==0){
+                suffix_max[i]=nums[i];
+            }else{
+                suffix_max[i] = max(suffix_max[i+1],nums[i]);
+            }
+        }
+        for(int i=0;i<=n-k;i++){
+            int M = max(suffix_max[i],prefix_max[i+k-1]);
+            ans.push_back(M);
+        }
+        return ans;
+    }
+};
+
+Problem 7 : Stock span problem
+
+class Solution {
+  public:
+    vector<int> calculateSpan(vector<int>& arr) {
+        // code here
+        int n = arr.size();
+        vector<int>ans(n);
+        ans[0]=1;
+        stack<pair<int,int>>stk;
+        stk.push({arr[0],0});
+        int idx = 1;
+        while(idx<n){
+            if(arr[idx]>=stk.top().first){
+                while(!stk.empty() && stk.top().first<=arr[idx]){
+                    stk.pop();
+                }
+                if(stk.empty()){
+                    ans[idx]=idx+1;
+                }else{
+                    ans[idx]=idx-stk.top().second;
+                }
+                stk.push({arr[idx],idx});
+            }else{
+                ans[idx]=1;
+                stk.push({arr[idx],idx});
+            }
+            idx++;
+        }
+        return ans;
+    }
+};
+
+Problem 8: Evaluate reverse polish  notation
+class Solution {
+public:
+    int evalRPN(vector<string>& tokens) {
+        stack<int> st;
+
+        for (string c : tokens) {
+            if (c == "+") {
+                int second = st.top(); st.pop();
+                int first = st.top(); st.pop();
+                st.push(first + second);
+            } else if (c == "-") {
+                int second = st.top(); st.pop();
+                int first = st.top(); st.pop();
+                st.push(first - second);
+            } else if (c == "*") {
+                int second = st.top(); st.pop();
+                int first = st.top(); st.pop();
+                st.push(first * second);
+            } else if (c == "/") {
+                int second = st.top(); st.pop();
+                int first = st.top(); st.pop();
+                st.push(first / second);
+            } else {
+                st.push(stoi(c));
+            }
+        }
+
+        return st.top();      
+    }
+};
+
+Problem 9: Largest rectangle in histogram
+
+class Solution {
+public:
+    int largestRectangleArea(vector<int>& heights) {
+        int n = heights.size();
+        vector<int> left(n), right(n);
+        stack<int> st;
+
+        for (int i = 0; i < n; i++) {
+            while (!st.empty() && heights[st.top()] >= heights[i]) st.pop();
+            left[i] = st.empty() ? -1 : st.top();
+            st.push(i);
+        }
+
+        while (!st.empty()) st.pop();
+
+        for (int i = n - 1; i >= 0; i--) {
+            while (!st.empty() && heights[st.top()] >= heights[i]) st.pop();
+            right[i] = st.empty() ? n : st.top();
+            st.push(i);
+        }
+
+        int maxArea = 0;
+        for (int i = 0; i < n; i++) {
+            int width = right[i] - left[i] - 1;
+            maxArea = max(maxArea, heights[i] * width);
+        }
+        return maxArea;
+    }
+};
+
+Problem 10 : LRU cache
+
+
+class LRUCache {
+    struct Node {
+        int key, value;
+        Node *prev, *next;
+        Node(int k, int v) : key(k), value(v), prev(nullptr), next(nullptr) {}
+    };
+
+    int cap;
+    unordered_map<int, Node*> m;
+    Node *head = new Node(-1, -1), *tail = new Node(-1, -1);
+
+public:
+    LRUCache(int capacity) : cap(capacity) {
+        head->next = tail;
+        tail->prev = head;
+    }
+
+    void addNode(Node* newNode) {
+        Node* temp = head->next;
+        newNode->next = temp;
+        newNode->prev = head;
+        head->next = newNode;
+        temp->prev = newNode;
+    }
+
+    void deleteNode(Node* delNode) {
+        Node* prevNode = delNode->prev;
+        Node* nextNode = delNode->next;
+        prevNode->next = nextNode;
+        nextNode->prev = prevNode;
+    }
+
+    int get(int key) {
+        if (m.find(key) != m.end()) {
+            Node* resNode = m[key];
+            int res = resNode->value;
+            m.erase(key);
+            deleteNode(resNode);
+            addNode(resNode);
+            m[key] = head->next;
+            return res;
+        }
+        return -1;
+    }
+
+    void put(int key, int value) {
+        if (m.find(key) != m.end()) {
+            Node* existingNode = m[key];
+            m.erase(key);
+            deleteNode(existingNode);
+        }
+        if (m.size() == cap) {
+            m.erase(tail->prev->key);
+            deleteNode(tail->prev);
+        }
+        addNode(new Node(key, value));
+        m[key] = head->next;
+    }
+};

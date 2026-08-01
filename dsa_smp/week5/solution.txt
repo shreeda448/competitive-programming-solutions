@@ -1,0 +1,337 @@
+Greedy Algorithms
+
+Problem 1: Maximum units on a truck
+class Solution {
+public:
+    int maximumUnits(vector<vector<int>>& boxTypes, int truckSize) {
+        int n = boxTypes.size();
+        for(int i=0;i<n;i++){
+            swap(boxTypes[i][0],boxTypes[i][1]);
+        }
+        sort(boxTypes.rbegin(),boxTypes.rend());
+        int ans = 0;
+        int boxes  = 0;
+        for(int i=0;i<n;i++){
+            if(boxes+boxTypes[i][1]<=truckSize){
+                ans+= boxTypes[i][1]*boxTypes[i][0];
+                boxes+=boxTypes[i][1];
+            }else if(truckSize-boxes>0){
+                int diff = truckSize-boxes;
+                ans+=diff*boxTypes[i][0];
+                boxes+=diff;
+            }
+        }
+        return ans;
+    }
+};
+
+Problem 2 : Lemonade change
+const int INF = 1e9+7;
+class Solution {
+public:
+    bool lemonadeChange(vector<int>& bills) {
+        int n =bills.size();
+        vector<int>freq(21);
+        freq[0]=INF;
+        for(int i = 0;i<n;i++){
+            freq[bills[i]]++;
+            if(bills[i]==5){
+                continue;
+            }
+            if(bills[i]==10){
+                if(freq[5]>0){
+                    freq[5]--;
+                    continue;
+                }
+                    return false;
+            }
+            if(bills[i]==20){
+                if(freq[10]>0 && freq[5]>0){
+                    freq[10]--;
+                    freq[5]--;
+                    continue;
+                }
+                if(freq[5]>2){
+                    freq[5]-=3;
+                    continue;
+                }
+                return false;
+            }
+        }
+        return true;
+    }
+};
+
+Problem 3 : Assign Cookies
+class Solution {
+public:
+    int findContentChildren(vector<int>& g, vector<int>& s) {
+        int N = g.size();
+        int M = s.size();
+        sort(g.begin(),g.end());
+        sort(s.begin(),s.end());
+        int ans = 0;
+        auto prevLowerBound = s.begin();
+        for(int i=0;i<N;i++){
+            int curLowerBound = g[i];
+            auto it = lower_bound(prevLowerBound,s.end(),curLowerBound);
+            if( it == s.end()){
+                break;
+            }
+            ans++;
+            prevLowerBound = it+1;
+        }
+        return ans;
+    }
+};
+
+Problem 4: Activity Selection
+class Solution {
+  public:
+    int activitySelection(vector<int> &start, vector<int> &finish) {
+        // code here
+        int n = start.size();
+        vector<pair<int,int>>taskTiming(n);
+        for(int i =0;i<n;i++){
+            taskTiming[i]={finish[i],start[i]};
+        }
+        sort(taskTiming.begin(),taskTiming.end());
+        int curStart = taskTiming[0].second;
+        int curEnd = taskTiming[0].first;
+        int ans = 1;
+        for(int i = 1;i<n;i++){
+            if(taskTiming[i].second>curEnd){
+                ans++;
+                curStart = taskTiming[i].second;
+                curEnd = taskTiming[i].first;
+            }
+        }
+        return ans;
+    }
+};
+
+Problem 5: Gas Station
+class Solution {
+public:
+    int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {
+        int total = 0, tank = 0, start = 0,delta;
+        for (int i = 0; i < gas.size(); i++) {
+            delta = gas[i] - cost[i];
+            total += delta;
+            tank += delta;
+
+            if (tank < 0) {
+                start = i + 1;
+                tank = 0;
+            }
+        }
+        return (total >= 0) ? start : -1;
+    }
+};
+
+Problem 6: Can Jump
+class Solution {
+public:
+    bool canJump(vector<int>& nums) {
+        int n = nums.size();
+        int max_possible_index = 0;
+        for(int i=0;i<n;i++){
+            if(i<=max_possible_index){
+                max_possible_index = max(max_possible_index,i+nums[i]);
+            }
+        }
+        if(max_possible_index>=n-1){
+            return true;
+        }
+        return false;
+    }
+};
+
+Problem 7: Minimum Platforms
+
+class Solution {
+  public:
+    int minPlatform(vector<int>& arr, vector<int>& dep) {
+        int n = arr.size();
+    int res = 0;
+   
+    sort(arr.begin(), arr.end());
+    sort(dep.begin(), dep.end());
+    
+
+    int cnt = 1;
+    int i = 1, j = 0;
+    while (i < n && j < n) {
+        if (arr[i] <= dep[j]) {
+            cnt++;
+            i++;
+        }
+        else if (arr[i] > dep[j]) {
+            cnt--;
+            j++;
+        }
+        res = max(res, cnt);
+    }
+    if (res==0)res=1;
+    return res;
+    }
+};
+
+Dynamic Programming
+
+Problem  1:  Dice  combinations
+
+#include <bits/stdc++.h>
+#include <vector>
+using namespace std;
+ 
+#define fastio()                                                               \
+  ios_base::sync_with_stdio(false);                                            \
+  cin.tie(NULL);                                                               \
+  cout.tie(NULL)
+#define ll long long
+#define pb push_back
+#define mp make_pair
+#define nline "\n"
+ 
+const int MOD = 1e9 + 7;
+ 
+void solve() {
+  int n;
+  cin >> n;
+  vector<int> dp(n + 1);
+  dp[0] = 1;
+  for (int i = 0; i < n; i++) {
+    for (int j = 1; j <= 6; j++) {
+      if (i + j <= n) {
+        dp[i + j] = (dp[i + j] + dp[i]) % MOD;
+      }
+    }
+  }
+  cout << dp[n] << nline;
+}
+ 
+int main() {
+  fastio();
+  int t = 1;
+  while (t--) {
+    solve();
+  }
+  return 0;
+}
+
+Problem 2 : Minimising coins
+#include <bits/stdc++.h>
+#include <vector>
+using namespace std;
+ 
+#define fastio()                                                               \
+  ios_base::sync_with_stdio(false);                                            \
+  cin.tie(NULL);                                                               \
+  cout.tie(NULL)
+#define ll long long
+#define pb push_back
+#define mp make_pair
+#define nline "\n"
+ 
+const int INF = 1e9 + 5;
+ 
+void solve() {
+  int n, x;
+  cin >> n >> x;
+  vector<int> c(n);
+  for (auto &x : c)
+    cin >> x;
+  vector<int> dp(x + 1, INF);
+  dp[0] = 0;
+  for (int i = 0; i < x; i++) {
+    for (int coin : c) {
+      if (i + coin <= x) {
+        dp[i + coin] = min(dp[i + coin], dp[i] + 1);
+      }
+    }
+  }
+  if (dp[x] == INF) {
+    cout << -1 << nline;
+    return;
+  }
+  cout << dp[x] << nline;
+}
+ 
+int main() {
+  fastio();
+  int t = 1;
+  while (t--) {
+    solve();
+  }
+  return 0;
+}
+
+Problem 3 : House Robber
+class Solution {
+public:
+    int rob(vector<int>& nums) {
+        int n = nums.size();
+        if(n==1){
+            return nums[0];
+        }
+        vector<int>dp(n);
+        dp[0]=nums[0];
+        dp[1]=max(nums[0],nums[1]);
+        for(int i=2;i<n;i++){
+            dp[i]=max(dp[i-1],nums[i]+dp[i-2]);
+        }
+        return  dp[n-1];
+    }
+};
+
+Problem 4 : Min cost climbing stairs
+const  int INF = 1e9+7;
+class Solution {
+public:
+    int minCostClimbingStairs(vector<int>& cost) {
+        int n = cost.size();
+        vector<int>dp(n+1,INF);
+        dp[0]=dp[1]=0;
+        for(int i = 2;i<=n;i++){
+            dp[i]=min({dp[i],dp[i-1]+cost[i-1],dp[i-2]+cost[i-2]});
+        }
+        return dp[n];
+    }
+};
+
+Problem 5 : Knapsack  problem
+
+class Solution {
+  public:
+    int knapsack(int W, vector<int> &val, vector<int> &wt) {
+        // code here
+        int n = val.size();
+        vector<int>dp(W+1);
+        for(int  i=1;i<=n;i++){
+            for(int j=W;j>=wt[i-1];j--){
+                if( i+wt[j])
+            dp[j] = max(dp[j], dp[j - wt[i - 1]] + val[i - 1]);
+            }
+        }
+        return dp[W];
+    }
+};
+
+Problem 6 : Coin change  2
+
+class Solution {
+public:
+    int change(int amount, vector<int>& coins) {
+        int n = coins.size();
+        vector<int> dp(amount + 1);
+        dp[0] = 1;
+        for (int coin : coins) {
+            for (int i = 0; i <=amount; i++) {
+                if (i + coin <= amount)
+                    dp[i + coin] =(long)dp[i+coin]+ dp[i] ;
+            }
+        }
+        return dp[amount];
+    }
+};
