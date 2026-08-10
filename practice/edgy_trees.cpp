@@ -10,8 +10,8 @@ using namespace std;
 #define pb push_back
 #define mp make_pair
 #define nline "\n"
-const int M = 1e9 + 7;
-int powm(int x, int n) {
+const ll M = 1e9 + 7;
+ll powm(ll x, ll n) {
   x %= M;
   if (n == 0)
     return 1;
@@ -24,7 +24,7 @@ int powm(int x, int n) {
     return p;
 }
 
-void dfs(int x, int &sz, vector<bool> &vis, vector<vector<int>> &adj) {
+void dfs(ll x, ll &sz, vector<bool> &vis, vector<vector<ll>> &adj) {
   vis[x] = true;
   sz++;
   for (auto &i : adj[x]) {
@@ -35,9 +35,9 @@ void dfs(int x, int &sz, vector<bool> &vis, vector<vector<int>> &adj) {
 }
 
 void solve() {
-  int n, k;
+  ll n, k;
   cin >> n >> k;
-  vector<vector<int>> adj(n + 1);
+  vector<vector<ll>> adj(n + 1);
   vector<bool> vis(n + 1, false);
   for (int i = 0; i < n - 1; i++) {
     int u, v, x;
@@ -47,8 +47,8 @@ void solve() {
       adj[v].push_back(u);
     }
   }
-  int ans = 0;
-  int sz = 0;
+  ll ans = 0;
+  ll sz = 0;
   for (int i = 1; i <= n; i++) {
     if (!vis[i]) {
       sz = 0;
@@ -56,7 +56,7 @@ void solve() {
       ans = (ans + powm(sz, k)) % M;
     }
   }
-  ans = (powm(n, k) - ans) % M;
+  ans = (powm(n, k) - ans + M) % M;
   cout << ans << nline;
   return;
 }
