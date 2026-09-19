@@ -1,10 +1,11 @@
 #include <bits/stdc++.h>
+#include <vector>
 using namespace std;
 
 // Fast I/O
 #define fastio()                                                               \
-  cin.tie(NULL);                                                               \
   ios_base::sync_with_stdio(false);                                            \
+  cin.tie(NULL);                                                               \
   cout.tie(NULL)
 
 // Type Aliases
@@ -52,56 +53,27 @@ template <typename T> ostream &operator<<(ostream &out, const vector<T> &v) {
 }
 
 void solve() {
-  int n, x, s;
-  cin >> n >> x >> s;
-  string u;
-  cin >> u;
-  char c = 'A';
-  int tot = 0;
-  for (char ch : u) {
-    if (ch == c)
-      tot++;
+  int n;
+  cin >> n;
+  ll sum = (ll)n * (n + 1) / 2;
+  if (sum & 1) {
+    cout << 0 << nline;
+    return;
   }
-  int mx = 0;
-  int p = 0;
-  for (int i = 0; i <= tot; i++) {
-    int cur = 0;
-    int empty_tables = x;
-    int par_fil_seats = 0;
-    int cnt = 0;
-    for (int j = 0; j < n; j++) {
-      bool act_as_I = false;
-      if (u[j] == 'I') {
-        act_as_I = true;
-      } else if (u[j] == 'A') {
-        if (cnt < i) {
-          act_as_I = true;
-        }
-        cnt++;
-      }
-      if (act_as_I) {
-        if (empty_tables > 0) {
-          cur++;
-          empty_tables--;
-          par_fil_seats += (s - 1);
-        }
-      } else {
-        if (par_fil_seats > 0) {
-          cur++;
-          par_fil_seats--;
-        }
-      }
+  ll target = sum / 2;
+  vector<ll> dp(target + 1, 0);
+  dp[0] = 1;
+  for (int i = 1; i <= n - 1; i++) {
+    for (ll s = target - i; s >= 0; s--) {
+      dp[s + i] = (dp[s + i] + dp[s]) % MOD;
     }
-    mx = max(mx, cur);
   }
-  cout << mx << nline;
+  cout << dp[target] << nline;
 }
-
 int main() {
   fastio();
   cout << fixed << setprecision(10); // Standardize floating point precision
   int t = 1;
-  cin >> t;
   while (t--) {
     solve();
   }

@@ -1,10 +1,11 @@
 #include <bits/stdc++.h>
+#include <vector>
 using namespace std;
 
 // Fast I/O
 #define fastio()                                                               \
-  cin.tie(NULL);                                                               \
   ios_base::sync_with_stdio(false);                                            \
+  cin.tie(NULL);                                                               \
   cout.tie(NULL)
 
 // Type Aliases
@@ -50,51 +51,56 @@ template <typename T> ostream &operator<<(ostream &out, const vector<T> &v) {
     out << v[i] << (i == sz(v) - 1 ? "" : " ");
   return out;
 }
-
 void solve() {
-  int n, x, s;
-  cin >> n >> x >> s;
-  string u;
-  cin >> u;
-  char c = 'A';
-  int tot = 0;
-  for (char ch : u) {
-    if (ch == c)
-      tot++;
-  }
-  int mx = 0;
-  int p = 0;
-  for (int i = 0; i <= tot; i++) {
-    int cur = 0;
-    int empty_tables = x;
-    int par_fil_seats = 0;
-    int cnt = 0;
-    for (int j = 0; j < n; j++) {
-      bool act_as_I = false;
-      if (u[j] == 'I') {
-        act_as_I = true;
-      } else if (u[j] == 'A') {
-        if (cnt < i) {
-          act_as_I = true;
-        }
-        cnt++;
-      }
-      if (act_as_I) {
-        if (empty_tables > 0) {
-          cur++;
-          empty_tables--;
-          par_fil_seats += (s - 1);
-        }
+  int n;
+  cin >> n;
+  vector<int> p(n);
+  cin >> p;
+  bool inc = false, dec = false;
+  vector<int> in;
+  vector<int> de;
+  for (int i = 1; i <= n; i++) {
+    if (i <= (n / 2)) {
+      if (p[i - 1] <= (n / 2)) {
+        inc = true;
+        in.pb(p[i - 1]);
       } else {
-        if (par_fil_seats > 0) {
-          cur++;
-          par_fil_seats--;
-        }
+        dec = true;
+        de.pb(p[i - 1]);
+      }
+    } else {
+      if (p[i - 1] > (n / 2)) {
+        inc = true;
+        in.pb(p[i - 1]);
+      } else {
+        dec = true;
+        de.pb(p[i - 1]);
       }
     }
-    mx = max(mx, cur);
   }
-  cout << mx << nline;
+  int cnt = 0;
+  if (inc)
+    cnt++;
+  if (dec)
+    cnt++;
+  cout << cnt << nline;
+  if (!in.empty()) {
+    cout << (int)in.size() << " ";
+  }
+  for (int b : in) {
+    cout << b << " ";
+  }
+  if (!in.empty())
+    cout << nline;
+
+  if (!de.empty()) {
+    cout << (int)de.size() << " ";
+  }
+  for (int b : de) {
+    cout << b << " ";
+  }
+  if (!de.empty())
+    cout << nline;
 }
 
 int main() {

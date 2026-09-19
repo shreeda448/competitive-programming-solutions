@@ -1,10 +1,11 @@
 #include <bits/stdc++.h>
+#include <vector>
 using namespace std;
 
 // Fast I/O
 #define fastio()                                                               \
-  cin.tie(NULL);                                                               \
   ios_base::sync_with_stdio(false);                                            \
+  cin.tie(NULL);                                                               \
   cout.tie(NULL)
 
 // Type Aliases
@@ -50,51 +51,59 @@ template <typename T> ostream &operator<<(ostream &out, const vector<T> &v) {
     out << v[i] << (i == sz(v) - 1 ? "" : " ");
   return out;
 }
-
 void solve() {
-  int n, x, s;
-  cin >> n >> x >> s;
-  string u;
-  cin >> u;
-  char c = 'A';
-  int tot = 0;
-  for (char ch : u) {
-    if (ch == c)
-      tot++;
+  int n;
+  cin >> n;
+  string s;
+  cin >> s;
+  if (n == 1 && s[0] == '0') {
+    cout << -1 << nline;
+    return;
   }
-  int mx = 0;
-  int p = 0;
-  for (int i = 0; i <= tot; i++) {
-    int cur = 0;
-    int empty_tables = x;
-    int par_fil_seats = 0;
-    int cnt = 0;
-    for (int j = 0; j < n; j++) {
-      bool act_as_I = false;
-      if (u[j] == 'I') {
-        act_as_I = true;
-      } else if (u[j] == 'A') {
-        if (cnt < i) {
-          act_as_I = true;
-        }
-        cnt++;
-      }
-      if (act_as_I) {
-        if (empty_tables > 0) {
-          cur++;
-          empty_tables--;
-          par_fil_seats += (s - 1);
-        }
+  for (int i = 0; i < n - 1; i++) {
+    if (s[i] == 0 && s[i + 1] == 0) {
+      cout << -1 << nline;
+      return;
+    }
+  }
+  vector<int> val(n);
+  int cur = (s[0] == '+') ? 1 : (s[0] == '0' ? 0 : -1);
+  map<char, int> mp;
+  mp['+'] = 0;
+  mp['0'] = 1;
+  mp['-'] = 2;
+  int curst = (s[0] == '+') ? 0 : (s[0] == '0' ? 1 : 2);
+  for (int i = 0; i < n; i++) {
+    int p = mp[s[i]];
+    if (curst == mp[s[i]]) {
+      val[i] = cur;
+      if (p == 0) {
+        cur++;
+      } else if (p == 1) {
+        cur = 0;
       } else {
-        if (par_fil_seats > 0) {
-          cur++;
-          par_fil_seats--;
-        }
+        --cur;
+      }
+    } else {
+      curst = p;
+      if (p == 0) {
+        val[i] = 1;
+        cur = 2;
+      } else if (p == 1) {
+        val[i] = 0;
+        cur = 0;
+      } else {
+        val[i] = -1;
+        cur = -2;
       }
     }
-    mx = max(mx, cur);
+  }
+  int mx = val[0];
+  for (int i = 1; i < n; i++) {
+    mx = max(mx, abs(val[i] - val[i - 1]));
   }
   cout << mx << nline;
+  return;
 }
 
 int main() {

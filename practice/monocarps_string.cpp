@@ -1,10 +1,12 @@
 #include <bits/stdc++.h>
+#include <climits>
+#include <vector>
 using namespace std;
 
 // Fast I/O
 #define fastio()                                                               \
-  cin.tie(NULL);                                                               \
   ios_base::sync_with_stdio(false);                                            \
+  cin.tie(NULL);                                                               \
   cout.tie(NULL)
 
 // Type Aliases
@@ -50,51 +52,57 @@ template <typename T> ostream &operator<<(ostream &out, const vector<T> &v) {
     out << v[i] << (i == sz(v) - 1 ? "" : " ");
   return out;
 }
-
 void solve() {
-  int n, x, s;
-  cin >> n >> x >> s;
-  string u;
-  cin >> u;
-  char c = 'A';
-  int tot = 0;
-  for (char ch : u) {
-    if (ch == c)
-      tot++;
+  int n;
+  cin >> n;
+  string s;
+  cin >> s;
+  int ca = 0, cb = 0;
+  for (char c : s) {
+    if (c == 'a')
+      ca++;
+    if (c == 'b')
+      cb++;
   }
-  int mx = 0;
-  int p = 0;
-  for (int i = 0; i <= tot; i++) {
-    int cur = 0;
-    int empty_tables = x;
-    int par_fil_seats = 0;
-    int cnt = 0;
-    for (int j = 0; j < n; j++) {
-      bool act_as_I = false;
-      if (u[j] == 'I') {
-        act_as_I = true;
-      } else if (u[j] == 'A') {
-        if (cnt < i) {
-          act_as_I = true;
-        }
-        cnt++;
-      }
-      if (act_as_I) {
-        if (empty_tables > 0) {
-          cur++;
-          empty_tables--;
-          par_fil_seats += (s - 1);
-        }
-      } else {
-        if (par_fil_seats > 0) {
-          cur++;
-          par_fil_seats--;
-        }
-      }
+  int dif = ca - cb;
+  if (dif == 0) {
+    cout << dif << nline;
+    return;
+  }
+  vector<int> prefA(n);
+  vector<int> prefB(n);
+  vector<int> prefdiff(n);
+  for (int i = 0; i < n; i++) {
+    if (i == 0) {
+      prefA[i] = (s[i] == 'a');
+      prefB[i] = (s[i] == 'b');
+    } else {
+      prefA[i] = prefA[i - 1] + (s[i] == 'a');
+      prefB[i] = prefB[i - 1] + (s[i] == 'b');
     }
-    mx = max(mx, cur);
   }
-  cout << mx << nline;
+  for (int i = 0; i < n; i++) {
+    prefdiff[i] = prefA[i] - prefB[i];
+  }
+  map<int, int> pos;
+  pos[0] = -1;
+  bool found = false;
+  int mn = INT_MAX;
+  for (int i = 0; i < n; i++) {
+    int cur = prefdiff[i];
+    int prev = cur - dif;
+    if (pos.find(prev) == pos.end()) {
+    } else {
+      found = true;
+      mn = min(mn, i - pos[prev]);
+    }
+    pos[cur] = i;
+  }
+  if (!found || mn == n) {
+    mn = -1;
+  }
+  cout << mn << nline;
+  return;
 }
 
 int main() {

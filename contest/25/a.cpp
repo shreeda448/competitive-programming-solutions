@@ -1,10 +1,11 @@
 #include <bits/stdc++.h>
+#include <vector>
 using namespace std;
 
 // Fast I/O
 #define fastio()                                                               \
-  cin.tie(NULL);                                                               \
   ios_base::sync_with_stdio(false);                                            \
+  cin.tie(NULL);                                                               \
   cout.tie(NULL)
 
 // Type Aliases
@@ -50,51 +51,30 @@ template <typename T> ostream &operator<<(ostream &out, const vector<T> &v) {
     out << v[i] << (i == sz(v) - 1 ? "" : " ");
   return out;
 }
-
 void solve() {
-  int n, x, s;
-  cin >> n >> x >> s;
-  string u;
-  cin >> u;
-  char c = 'A';
-  int tot = 0;
-  for (char ch : u) {
-    if (ch == c)
-      tot++;
-  }
-  int mx = 0;
-  int p = 0;
-  for (int i = 0; i <= tot; i++) {
-    int cur = 0;
-    int empty_tables = x;
-    int par_fil_seats = 0;
-    int cnt = 0;
-    for (int j = 0; j < n; j++) {
-      bool act_as_I = false;
-      if (u[j] == 'I') {
-        act_as_I = true;
-      } else if (u[j] == 'A') {
-        if (cnt < i) {
-          act_as_I = true;
-        }
-        cnt++;
-      }
-      if (act_as_I) {
-        if (empty_tables > 0) {
-          cur++;
-          empty_tables--;
-          par_fil_seats += (s - 1);
-        }
-      } else {
-        if (par_fil_seats > 0) {
-          cur++;
-          par_fil_seats--;
-        }
-      }
+  int n;
+  cin >> n;
+  vector<int> p(n);
+  for (auto &x : p)
+    cin >> x;
+  vector<int> q;
+  for (int i = 0; i < n; i++) {
+    if (p[i] != i + 1) {
+      q.push_back(p[i]);
     }
-    mx = max(mx, cur);
   }
-  cout << mx << nline;
+  if (q.empty()) {
+    cout << "YES" << nline;
+    return;
+  }
+  for (int i = 0; i < q.size() - 1; i++) {
+    if (q[i] < q[i + 1]) {
+      cout << "NO" << nline;
+      return;
+    }
+  }
+  cout << "YES" << nline;
+  return;
 }
 
 int main() {

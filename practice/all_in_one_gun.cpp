@@ -1,10 +1,11 @@
 #include <bits/stdc++.h>
+#include <vector>
 using namespace std;
 
 // Fast I/O
 #define fastio()                                                               \
-  cin.tie(NULL);                                                               \
   ios_base::sync_with_stdio(false);                                            \
+  cin.tie(NULL);                                                               \
   cout.tie(NULL)
 
 // Type Aliases
@@ -50,51 +51,52 @@ template <typename T> ostream &operator<<(ostream &out, const vector<T> &v) {
     out << v[i] << (i == sz(v) - 1 ? "" : " ");
   return out;
 }
-
 void solve() {
-  int n, x, s;
-  cin >> n >> x >> s;
-  string u;
-  cin >> u;
-  char c = 'A';
-  int tot = 0;
-  for (char ch : u) {
-    if (ch == c)
-      tot++;
+  int n;
+  ll h, k;
+  cin >> n >> h >> k;
+  vector<ll> a(n);
+  ll sum = 0;
+  for (auto &x : a) {
+    cin >> x;
+    sum += x;
   }
-  int mx = 0;
-  int p = 0;
-  for (int i = 0; i <= tot; i++) {
-    int cur = 0;
-    int empty_tables = x;
-    int par_fil_seats = 0;
-    int cnt = 0;
-    for (int j = 0; j < n; j++) {
-      bool act_as_I = false;
-      if (u[j] == 'I') {
-        act_as_I = true;
-      } else if (u[j] == 'A') {
-        if (cnt < i) {
-          act_as_I = true;
-        }
-        cnt++;
-      }
-      if (act_as_I) {
-        if (empty_tables > 0) {
-          cur++;
-          empty_tables--;
-          par_fil_seats += (s - 1);
-        }
+  // prefix sum, prefix min, suffix max
+  vector<ll> prefix_sum(n);
+  vector<ll> prefix_min(n);
+  vector<ll> suffix_max(n);
+  for (int i = 0; i < n; i++) {
+    if (i == 0) {
+      prefix_min[i] = a[i];
+      prefix_sum[i] = a[i];
+      suffix_max[n - 1 - i] = a[n - 1 - i];
+    } else {
+      prefix_min[i] = min(prefix_min[i - 1], a[i]);
+      prefix_sum[i] = a[i] + prefix_sum[i - 1];
+      suffix_max[n - 1 - i] = max(suffix_max[n - i], a[n - 1 - i]);
+    }
+  }
+  ll res = (h / sum) * (n + k);
+  if (h % sum == 0) {
+    res -= k;
+  } else {
+    h = (h % sum);
+    ll low = 1, high = n;
+    ll mn = n;
+    while (low <= high) {
+      ll mid = (high - low) / 2 + low;
+      if (max(prefix_sum[mid - 1], prefix_sum[mid - 1] - prefix_min[mid - 1] +
+                                       suffix_max[mid]) >= h) {
+        mn = min(mn, mid);
+        high = mid - 1;
       } else {
-        if (par_fil_seats > 0) {
-          cur++;
-          par_fil_seats--;
-        }
+        low = mid + 1;
       }
     }
-    mx = max(mx, cur);
+    res += mn;
   }
-  cout << mx << nline;
+  cout << res << nline;
+  return;
 }
 
 int main() {

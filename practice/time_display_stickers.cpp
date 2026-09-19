@@ -3,8 +3,8 @@ using namespace std;
 
 // Fast I/O
 #define fastio()                                                               \
-  cin.tie(NULL);                                                               \
   ios_base::sync_with_stdio(false);                                            \
+  cin.tie(NULL);                                                               \
   cout.tie(NULL)
 
 // Type Aliases
@@ -50,51 +50,76 @@ template <typename T> ostream &operator<<(ostream &out, const vector<T> &v) {
     out << v[i] << (i == sz(v) - 1 ? "" : " ");
   return out;
 }
-
 void solve() {
-  int n, x, s;
-  cin >> n >> x >> s;
-  string u;
-  cin >> u;
-  char c = 'A';
-  int tot = 0;
-  for (char ch : u) {
-    if (ch == c)
-      tot++;
-  }
-  int mx = 0;
-  int p = 0;
-  for (int i = 0; i <= tot; i++) {
-    int cur = 0;
-    int empty_tables = x;
-    int par_fil_seats = 0;
-    int cnt = 0;
-    for (int j = 0; j < n; j++) {
-      bool act_as_I = false;
-      if (u[j] == 'I') {
-        act_as_I = true;
-      } else if (u[j] == 'A') {
-        if (cnt < i) {
-          act_as_I = true;
-        }
-        cnt++;
-      }
-      if (act_as_I) {
-        if (empty_tables > 0) {
-          cur++;
-          empty_tables--;
-          par_fil_seats += (s - 1);
-        }
-      } else {
-        if (par_fil_seats > 0) {
-          cur++;
-          par_fil_seats--;
-        }
-      }
+  int n;
+  cin >> n;
+  string s;
+  cin >> s;
+  int low = 0, high = (n / 3);
+  int ans = 0;
+  int zero = 0, one = 0, five = 0, nine = 0;
+  for (int i = 0; i < n; i++) {
+    if (s[i] == '0') {
+      zero++;
     }
-    mx = max(mx, cur);
+    if (s[i] == '1') {
+      one++;
+    }
+    if (s[i] - '0' <= 5) {
+      five++;
+    }
+    if (s[i] - '0' <= 9) {
+      nine++;
+    }
   }
-  cout << mx << nline;
+  while (low <= high) {
+    int mid = (high - low) / 2 + low;
+    bool possible = false;
+    for (int x = 0; x <= mid; x++) {
+      int z1 = zero, o1 = one, f1 = five, n1 = nine;
+      int y = mid - x;
+      if (z1 < x) {
+        continue;
+      } else {
+        z1 -= x;
+        f1 -= x;
+        n1 -= x;
+      }
+      if (o1 < y) {
+        continue;
+      } else {
+        o1 -= y;
+        f1 -= y;
+        n1 -= y;
+      }
+      if (z1 + o1 < y) {
+        continue;
+      } else {
+        f1 -= y;
+        n1 -= y;
+      }
+      if (f1 < x + y) {
+        continue;
+      } else {
+        f1 -= x + y;
+        n1 -= (x + y);
+      }
+      if (n1 < 2 * x + y) {
+        continue;
+      } else {
+        n1 -= 2 * x + y;
+      }
+      possible = true;
+    }
+    if (possible) {
+      ans = max(ans, mid);
+      low = mid + 1;
+    } else {
+      high = mid - 1;
+    }
+  }
+  cout << ans << nline;
+  return;
 }
 
 int main() {

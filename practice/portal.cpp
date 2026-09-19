@@ -1,10 +1,11 @@
 #include <bits/stdc++.h>
+#include <vector>
 using namespace std;
 
 // Fast I/O
 #define fastio()                                                               \
-  cin.tie(NULL);                                                               \
   ios_base::sync_with_stdio(false);                                            \
+  cin.tie(NULL);                                                               \
   cout.tie(NULL)
 
 // Type Aliases
@@ -50,51 +51,78 @@ template <typename T> ostream &operator<<(ostream &out, const vector<T> &v) {
     out << v[i] << (i == sz(v) - 1 ? "" : " ");
   return out;
 }
-
 void solve() {
-  int n, x, s;
-  cin >> n >> x >> s;
-  string u;
-  cin >> u;
-  char c = 'A';
-  int tot = 0;
-  for (char ch : u) {
-    if (ch == c)
-      tot++;
+  int n, x, y;
+  cin >> n >> x >> y;
+  vector<int> p(n + 2);
+  for (int i = 0; i < n + 2; i++) {
+    if (i == x || i == y + 1) {
+      continue;
+    }
+    cin >> p[i];
   }
-  int mx = 0;
-  int p = 0;
-  for (int i = 0; i <= tot; i++) {
-    int cur = 0;
-    int empty_tables = x;
-    int par_fil_seats = 0;
-    int cnt = 0;
-    for (int j = 0; j < n; j++) {
-      bool act_as_I = false;
-      if (u[j] == 'I') {
-        act_as_I = true;
-      } else if (u[j] == 'A') {
-        if (cnt < i) {
-          act_as_I = true;
-        }
-        cnt++;
-      }
-      if (act_as_I) {
-        if (empty_tables > 0) {
-          cur++;
-          empty_tables--;
-          par_fil_seats += (s - 1);
-        }
+  vector<int> res(n + 2);
+  int mn = n + 1;
+  int idx = -1;
+  for (int i = x + 1; i < y + 1; i++) {
+    if (mn > p[i]) {
+      idx = i;
+    }
+    mn = min(mn, p[i]);
+  }
+  rotate(p.begin() + x + 1, p.begin() + idx, p.begin() + y + 1);
+  if (p[0] > mn) {
+    for (int i = x + 1; i < y + 1; i++) {
+      cout << p[i] << " ";
+    }
+    for (int i = 0; i < x; i++) {
+      cout << p[i] << " ";
+    }
+    for (int i = y + 2; i < n + 2; i++) {
+      cout << p[i] << " ";
+    }
+  } else {
+    int idx1 = -1;
+    bool first = false;
+    for (int i = 0; i < x; i++) {
+      if (p[i] > mn) {
+        idx1 = i;
+        first = true;
+        break;
       } else {
-        if (par_fil_seats > 0) {
-          cur++;
-          par_fil_seats--;
+        cout << p[i] << " ";
+      }
+    }
+    if (idx1 == -1) {
+      for (int i = y + 2; i < n + 2; i++) {
+        if (p[i] > mn) {
+          idx1 = i;
+          break;
+        } else {
+          cout << p[i] << " ";
         }
       }
     }
-    mx = max(mx, cur);
+    for (int i = x + 1; i < y + 1; i++) {
+      cout << p[i] << " ";
+    }
+    if (idx1 != -1) {
+      if (first) {
+        for (int i = idx1; i < x; i++) {
+          cout << p[i] << " ";
+        }
+        for (int i = y + 2; i < n + 2; i++) {
+          cout << p[i] << " ";
+        }
+      } else {
+        for (int i = idx1; i < n + 2; i++) {
+          cout << p[i] << " ";
+        }
+      }
+    }
   }
-  cout << mx << nline;
+  cout << nline;
+  return;
 }
 
 int main() {

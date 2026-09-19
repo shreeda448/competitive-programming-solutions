@@ -1,10 +1,11 @@
 #include <bits/stdc++.h>
+#include <vector>
 using namespace std;
 
 // Fast I/O
 #define fastio()                                                               \
-  cin.tie(NULL);                                                               \
   ios_base::sync_with_stdio(false);                                            \
+  cin.tie(NULL);                                                               \
   cout.tie(NULL)
 
 // Type Aliases
@@ -50,51 +51,55 @@ template <typename T> ostream &operator<<(ostream &out, const vector<T> &v) {
     out << v[i] << (i == sz(v) - 1 ? "" : " ");
   return out;
 }
-
 void solve() {
-  int n, x, s;
-  cin >> n >> x >> s;
-  string u;
-  cin >> u;
-  char c = 'A';
-  int tot = 0;
-  for (char ch : u) {
-    if (ch == c)
-      tot++;
+  int n, k;
+  cin >> n >> k;
+  vector<ll> a(n);
+  cin >> a;
+  vector<ll> b(n);
+  cin >> b;
+  for (int i = 0; i < n - k; i++) {
+    if (a[i] == b[i] || b[i] == -1) {
+      continue;
+    } else {
+      cout << "NO" << nline;
+      return;
+    }
   }
-  int mx = 0;
-  int p = 0;
-  for (int i = 0; i <= tot; i++) {
-    int cur = 0;
-    int empty_tables = x;
-    int par_fil_seats = 0;
-    int cnt = 0;
-    for (int j = 0; j < n; j++) {
-      bool act_as_I = false;
-      if (u[j] == 'I') {
-        act_as_I = true;
-      } else if (u[j] == 'A') {
-        if (cnt < i) {
-          act_as_I = true;
-        }
-        cnt++;
-      }
-      if (act_as_I) {
-        if (empty_tables > 0) {
-          cur++;
-          empty_tables--;
-          par_fil_seats += (s - 1);
-        }
-      } else {
-        if (par_fil_seats > 0) {
-          cur++;
-          par_fil_seats--;
-        }
+  for (int i = n - 1; i >= k; i--) {
+    if (a[i] == b[i] || b[i] == -1) {
+      continue;
+    } else {
+      cout << "NO" << nline;
+      return;
+    }
+  }
+  int wildcard = 0;
+  vector<int> freq_a(n + 1);
+  vector<int> freq_b(n + 1);
+  for (int i = n - k; i <= k - 1; i++) {
+    if (b[i] == -1) {
+      wildcard++;
+    } else {
+      freq_b[b[i]]++;
+      if (freq_b[b[i]] > 1) {
+        cout << "NO" << nline;
+        return;
       }
     }
-    mx = max(mx, cur);
+    freq_a[a[i]]++;
   }
-  cout << mx << nline;
+  for (int i = n - k; i <= k - 1; i++) {
+    if (freq_b[a[i]] == 0) {
+      wildcard -= freq_a[a[i]];
+    }
+    if (wildcard < 0) {
+      cout << "NO" << nline;
+      return;
+    }
+  }
+  cout << "YES" << nline;
+  return;
 }
 
 int main() {

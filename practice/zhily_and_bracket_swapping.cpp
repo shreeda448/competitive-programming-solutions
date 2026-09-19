@@ -3,8 +3,8 @@ using namespace std;
 
 // Fast I/O
 #define fastio()                                                               \
-  cin.tie(NULL);                                                               \
   ios_base::sync_with_stdio(false);                                            \
+  cin.tie(NULL);                                                               \
   cout.tie(NULL)
 
 // Type Aliases
@@ -50,51 +50,44 @@ template <typename T> ostream &operator<<(ostream &out, const vector<T> &v) {
     out << v[i] << (i == sz(v) - 1 ? "" : " ");
   return out;
 }
-
 void solve() {
-  int n, x, s;
-  cin >> n >> x >> s;
-  string u;
-  cin >> u;
-  char c = 'A';
-  int tot = 0;
-  for (char ch : u) {
-    if (ch == c)
-      tot++;
-  }
-  int mx = 0;
-  int p = 0;
-  for (int i = 0; i <= tot; i++) {
-    int cur = 0;
-    int empty_tables = x;
-    int par_fil_seats = 0;
-    int cnt = 0;
-    for (int j = 0; j < n; j++) {
-      bool act_as_I = false;
-      if (u[j] == 'I') {
-        act_as_I = true;
-      } else if (u[j] == 'A') {
-        if (cnt < i) {
-          act_as_I = true;
-        }
-        cnt++;
-      }
-      if (act_as_I) {
-        if (empty_tables > 0) {
-          cur++;
-          empty_tables--;
-          par_fil_seats += (s - 1);
-        }
+  int n;
+  cin >> n;
+  string a, b;
+  cin >> a >> b;
+  int c1 = 0, c2 = 0;
+  bool ok = false;
+  for (int i = 0; i < n; i++) {
+    if (a[i] == b[i]) {
+      if (a[i] == '(') {
+        c1++;
+        c2++;
       } else {
-        if (par_fil_seats > 0) {
-          cur++;
-          par_fil_seats--;
-        }
+        c1--;
+        c2--;
+      }
+    } else {
+      if (c1 < c2) {
+        c1++;
+        c2--;
+      } else {
+        c1--;
+        c2++;
       }
     }
-    mx = max(mx, cur);
+    if (c1 < 0 || c2 < 0) {
+      ok = true;
+      break;
+    }
   }
-  cout << mx << nline;
+  if (c1 != 0 || c2 != 0) {
+    ok = true;
+  }
+  if (ok) {
+    cout << "NO" << nline;
+    return;
+  }
+  cout << "YES" << nline;
 }
 
 int main() {

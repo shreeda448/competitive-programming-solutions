@@ -1,10 +1,11 @@
 #include <bits/stdc++.h>
+#include <vector>
 using namespace std;
 
 // Fast I/O
 #define fastio()                                                               \
-  cin.tie(NULL);                                                               \
   ios_base::sync_with_stdio(false);                                            \
+  cin.tie(NULL);                                                               \
   cout.tie(NULL)
 
 // Type Aliases
@@ -51,57 +52,77 @@ template <typename T> ostream &operator<<(ostream &out, const vector<T> &v) {
   return out;
 }
 
+const int MAX_N = 400005;
+const int MAX_BITS = 205;
+vector<bitset<MAX_N>> columns(MAX_BITS);
+
 void solve() {
-  int n, x, s;
-  cin >> n >> x >> s;
-  string u;
-  cin >> u;
-  char c = 'A';
-  int tot = 0;
-  for (char ch : u) {
-    if (ch == c)
-      tot++;
+  int n, m, k;
+  cin >> n >> m >> k;
+  string t;
+  cin >> t;
+  vector<string> s(n);
+  for (int i = 0; i < n; i++) {
+    cin >> s[i];
   }
-  int mx = 0;
-  int p = 0;
-  for (int i = 0; i <= tot; i++) {
-    int cur = 0;
-    int empty_tables = x;
-    int par_fil_seats = 0;
-    int cnt = 0;
-    for (int j = 0; j < n; j++) {
-      bool act_as_I = false;
-      if (u[j] == 'I') {
-        act_as_I = true;
-      } else if (u[j] == 'A') {
-        if (cnt < i) {
-          act_as_I = true;
-        }
-        cnt++;
-      }
-      if (act_as_I) {
-        if (empty_tables > 0) {
-          cur++;
-          empty_tables--;
-          par_fil_seats += (s - 1);
-        }
-      } else {
-        if (par_fil_seats > 0) {
-          cur++;
-          par_fil_seats--;
-        }
+  for (int j = 0; j < k; j++) {
+    columns[j].reset();
+    for (int i = 0; i < n; i++) {
+      if (s[i][j] == t[j]) {
+        columns[j].set(i);
       }
     }
-    mx = max(mx, cur);
   }
-  cout << mx << nline;
+  bitset<MAX_N> ud;
+  for (int i = 0; i < n; i++) {
+    ud.set(i);
+  }
+  int Q;
+  cin >> Q;
+  while (Q--) {
+    int g, r;
+    cin >> g >> r;
+    g--;
+    r--;
+    s[g][r] = (s[g][r] == 'o' ? 'x' : 'o');
+    columns[r].flip(g);
+
+    bitset<MAX_N> undetermined = ud;
+    int a = 0;
+    bool passed = false;
+    for (int step = 0; step < k; step++) {
+      if (!undetermined.test(g)) {
+        break;
+      }
+      auto cu = undetermined & columns[step];
+      int Cr = cu.count();
+      if (a + Cr <= m) {
+        if (cu.test(g)) {
+          passed = true;
+          break;
+        }
+        undetermined &= ~cu;
+        a += Cr;
+      } else {
+        if (!cu.test(g)) {
+          passed = false;
+          break;
+        }
+        undetermined &= columns[step];
+      }
+    }
+    if (passed) {
+      cout << "YES\n";
+    } else {
+      cout << "NO\n";
+    }
+  }
 }
 
 int main() {
   fastio();
-  cout << fixed << setprecision(10); // Standardize floating point precision
+  cout << fixed << setprecision(10);
   int t = 1;
-  cin >> t;
   while (t--) {
     solve();
   }

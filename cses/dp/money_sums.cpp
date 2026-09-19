@@ -1,10 +1,12 @@
 #include <bits/stdc++.h>
+#include <cinttypes>
+#include <vector>
 using namespace std;
 
 // Fast I/O
 #define fastio()                                                               \
-  cin.tie(NULL);                                                               \
   ios_base::sync_with_stdio(false);                                            \
+  cin.tie(NULL);                                                               \
   cout.tie(NULL)
 
 // Type Aliases
@@ -52,56 +54,34 @@ template <typename T> ostream &operator<<(ostream &out, const vector<T> &v) {
 }
 
 void solve() {
-  int n, x, s;
-  cin >> n >> x >> s;
-  string u;
-  cin >> u;
-  char c = 'A';
-  int tot = 0;
-  for (char ch : u) {
-    if (ch == c)
-      tot++;
+  int n;
+  cin >> n;
+  vector<int> x(n);
+  for (auto &y : x)
+    cin >> y;
+  bitset<100002> dp;
+  dp[0] = true;
+  int sum = 0;
+  rep(i, 0, n) {
+    int coin = x[i];
+    dp |= (dp << coin);
+    sum += coin;
   }
-  int mx = 0;
-  int p = 0;
-  for (int i = 0; i <= tot; i++) {
-    int cur = 0;
-    int empty_tables = x;
-    int par_fil_seats = 0;
-    int cnt = 0;
-    for (int j = 0; j < n; j++) {
-      bool act_as_I = false;
-      if (u[j] == 'I') {
-        act_as_I = true;
-      } else if (u[j] == 'A') {
-        if (cnt < i) {
-          act_as_I = true;
-        }
-        cnt++;
-      }
-      if (act_as_I) {
-        if (empty_tables > 0) {
-          cur++;
-          empty_tables--;
-          par_fil_seats += (s - 1);
-        }
-      } else {
-        if (par_fil_seats > 0) {
-          cur++;
-          par_fil_seats--;
-        }
-      }
+  vector<int> val;
+  for (int i = 1; i < (int)dp.size(); i++) {
+    if (dp[i]) {
+      val.pb(i);
     }
-    mx = max(mx, cur);
   }
-  cout << mx << nline;
+  cout << (int)val.size() << nline;
+  rep(i, 0, (int)val.size()) { cout << val[i] << " "; }
+  cout << nline;
 }
 
 int main() {
   fastio();
   cout << fixed << setprecision(10); // Standardize floating point precision
   int t = 1;
-  cin >> t;
   while (t--) {
     solve();
   }

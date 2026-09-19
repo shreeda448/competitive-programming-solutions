@@ -1,10 +1,11 @@
 #include <bits/stdc++.h>
+#include <vector>
 using namespace std;
 
 // Fast I/O
 #define fastio()                                                               \
-  cin.tie(NULL);                                                               \
   ios_base::sync_with_stdio(false);                                            \
+  cin.tie(NULL);                                                               \
   cout.tie(NULL)
 
 // Type Aliases
@@ -50,58 +51,35 @@ template <typename T> ostream &operator<<(ostream &out, const vector<T> &v) {
     out << v[i] << (i == sz(v) - 1 ? "" : " ");
   return out;
 }
-
 void solve() {
-  int n, x, s;
-  cin >> n >> x >> s;
-  string u;
-  cin >> u;
-  char c = 'A';
-  int tot = 0;
-  for (char ch : u) {
-    if (ch == c)
-      tot++;
+  int n;
+  cin >> n;
+  vector<ll> x(n);
+  cin >> x;
+  vector<vector<pair<ll, ll>>> dp(n, vector<pair<ll, ll>>(n));
+  vector<ll> pref(n + 1);
+  for (int i = 1; i <= n; i++) {
+    pref[i] = pref[i - 1] + x[i - 1];
   }
-  int mx = 0;
-  int p = 0;
-  for (int i = 0; i <= tot; i++) {
-    int cur = 0;
-    int empty_tables = x;
-    int par_fil_seats = 0;
-    int cnt = 0;
-    for (int j = 0; j < n; j++) {
-      bool act_as_I = false;
-      if (u[j] == 'I') {
-        act_as_I = true;
-      } else if (u[j] == 'A') {
-        if (cnt < i) {
-          act_as_I = true;
-        }
-        cnt++;
-      }
-      if (act_as_I) {
-        if (empty_tables > 0) {
-          cur++;
-          empty_tables--;
-          par_fil_seats += (s - 1);
-        }
+  for (int L = n - 1; L >= 0; L--) {
+    for (int R = L; R < n; R++) {
+      if (L == R) {
+        dp[L][R] = {x[L], 0};
+        continue;
       } else {
-        if (par_fil_seats > 0) {
-          cur++;
-          par_fil_seats--;
-        }
+        ll me = max(x[L] + dp[L + 1][R].second, x[R] + dp[L][R - 1].second);
+        ll he = pref[R + 1] - pref[L] - me;
+        dp[L][R] = {me, he};
       }
     }
-    mx = max(mx, cur);
   }
-  cout << mx << nline;
+  cout << dp[0][n - 1].first << nline;
 }
 
 int main() {
   fastio();
   cout << fixed << setprecision(10); // Standardize floating point precision
   int t = 1;
-  cin >> t;
   while (t--) {
     solve();
   }

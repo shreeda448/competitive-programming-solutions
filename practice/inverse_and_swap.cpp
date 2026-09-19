@@ -1,10 +1,11 @@
 #include <bits/stdc++.h>
+#include <vector>
 using namespace std;
 
 // Fast I/O
 #define fastio()                                                               \
-  cin.tie(NULL);                                                               \
   ios_base::sync_with_stdio(false);                                            \
+  cin.tie(NULL);                                                               \
   cout.tie(NULL)
 
 // Type Aliases
@@ -50,58 +51,45 @@ template <typename T> ostream &operator<<(ostream &out, const vector<T> &v) {
     out << v[i] << (i == sz(v) - 1 ? "" : " ");
   return out;
 }
-
 void solve() {
-  int n, x, s;
-  cin >> n >> x >> s;
-  string u;
-  cin >> u;
-  char c = 'A';
-  int tot = 0;
-  for (char ch : u) {
-    if (ch == c)
-      tot++;
-  }
-  int mx = 0;
-  int p = 0;
-  for (int i = 0; i <= tot; i++) {
-    int cur = 0;
-    int empty_tables = x;
-    int par_fil_seats = 0;
-    int cnt = 0;
-    for (int j = 0; j < n; j++) {
-      bool act_as_I = false;
-      if (u[j] == 'I') {
-        act_as_I = true;
-      } else if (u[j] == 'A') {
-        if (cnt < i) {
-          act_as_I = true;
-        }
-        cnt++;
-      }
-      if (act_as_I) {
-        if (empty_tables > 0) {
-          cur++;
-          empty_tables--;
-          par_fil_seats += (s - 1);
-        }
+  int n;
+  cin >> n;
+  int q;
+  cin >> q;
+  vector<vector<int>> p(2, vector<int>(n));
+  cin >> p[0];
+  rep(i, 0, n) { p[1][p[0][i] - 1] = i + 1; }
+  bool first = true;
+  rep(i, 0, q) {
+    int j;
+    cin >> j;
+    if (j == 1) {
+      int x, y;
+      cin >> x >> y;
+      if (first) {
+        swap(p[1][p[0][x - 1] - 1], p[1][p[0][y - 1] - 1]);
+        swap(p[0][x - 1], p[0][y - 1]);
       } else {
-        if (par_fil_seats > 0) {
-          cur++;
-          par_fil_seats--;
-        }
+        swap(p[0][p[1][x - 1] - 1], p[0][p[1][y - 1] - 1]);
+        swap(p[1][x - 1], p[1][y - 1]);
       }
+    } else {
+      first = !first;
     }
-    mx = max(mx, cur);
   }
-  cout << mx << nline;
+  if (first) {
+    cout << p[0] << nline;
+    return;
+  } else {
+    cout << p[1] << nline;
+    return;
+  }
 }
 
 int main() {
   fastio();
   cout << fixed << setprecision(10); // Standardize floating point precision
   int t = 1;
-  cin >> t;
   while (t--) {
     solve();
   }

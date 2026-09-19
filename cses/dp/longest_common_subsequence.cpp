@@ -1,10 +1,11 @@
 #include <bits/stdc++.h>
+#include <vector>
 using namespace std;
 
 // Fast I/O
 #define fastio()                                                               \
-  cin.tie(NULL);                                                               \
   ios_base::sync_with_stdio(false);                                            \
+  cin.tie(NULL);                                                               \
   cout.tie(NULL)
 
 // Type Aliases
@@ -50,58 +51,56 @@ template <typename T> ostream &operator<<(ostream &out, const vector<T> &v) {
     out << v[i] << (i == sz(v) - 1 ? "" : " ");
   return out;
 }
-
 void solve() {
-  int n, x, s;
-  cin >> n >> x >> s;
-  string u;
-  cin >> u;
-  char c = 'A';
-  int tot = 0;
-  for (char ch : u) {
-    if (ch == c)
-      tot++;
-  }
-  int mx = 0;
-  int p = 0;
-  for (int i = 0; i <= tot; i++) {
-    int cur = 0;
-    int empty_tables = x;
-    int par_fil_seats = 0;
-    int cnt = 0;
-    for (int j = 0; j < n; j++) {
-      bool act_as_I = false;
-      if (u[j] == 'I') {
-        act_as_I = true;
-      } else if (u[j] == 'A') {
-        if (cnt < i) {
-          act_as_I = true;
-        }
-        cnt++;
+  int n, m;
+  cin >> n >> m;
+  vector<ll> a(n);
+  vector<ll> b(m);
+  cin >> a;
+  cin >> b;
+  vector<vector<int>> dp(n + 1, vector<int>(m + 1));
+  vector<vector<pair<int, int>>> par(n + 1, vector<pair<int, int>>(m + 1));
+  auto maxi = [&](int i, int j, int i2, int j2, int cost) {
+    if (dp[i][j] + cost > dp[i2][j2]) {
+      dp[i2][j2] = dp[i][j] + cost;
+      par[i2][j2] = {i, j};
+    }
+  };
+  rep(i, 0, n + 1) {
+    rep(j, 0, m + 1) {
+      if (i != n && j != m) {
+        maxi(i, j, i + 1, j + 1, a[i] == b[j]);
       }
-      if (act_as_I) {
-        if (empty_tables > 0) {
-          cur++;
-          empty_tables--;
-          par_fil_seats += (s - 1);
-        }
-      } else {
-        if (par_fil_seats > 0) {
-          cur++;
-          par_fil_seats--;
-        }
+      if (i != n) {
+        maxi(i, j, i + 1, j, 0);
+      }
+      if (j != m) {
+        maxi(i, j, i, j + 1, 0);
       }
     }
-    mx = max(mx, cur);
   }
-  cout << mx << nline;
+  cout << dp[n][m] << nline;
+  int x = n, y = m;
+  vector<int> path;
+  while (x > 0 || y > 0) {
+    auto [i2, j2] = par[x][y];
+    if (i2 + 1 == x && j2 + 1 == y && a[i2] == b[j2]) {
+      path.push_back(a[i2]);
+    }
+    x = i2;
+    y = j2;
+  }
+  reverse(path.begin(), path.end());
+  for (int x : path) {
+    cout << x << " ";
+  }
+  cout << nline;
 }
 
 int main() {
   fastio();
   cout << fixed << setprecision(10); // Standardize floating point precision
   int t = 1;
-  cin >> t;
   while (t--) {
     solve();
   }
