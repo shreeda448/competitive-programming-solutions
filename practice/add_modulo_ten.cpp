@@ -50,7 +50,7 @@ void solve() {
       a[i] += 6;
     } else if (a[i] % 10 == 8) {
       a[i] += 14;
-    }
+      }
   }
   int rem = a[0] % 20;
   for (int i = 0; i < n; i++) {
