@@ -1,41 +1,107 @@
-#include "bits/stdc++.h"
+#include <bits/stdc++.h>
+#include <climits>
 #include <vector>
 using namespace std;
-#define nline '\n';
 
-void solve(){
-    int n;cin>>n;
-    long long mx = 0;
-    long long z = 0;
-    for(int i=0;i<n;i++){
-        long long x,y;
-        cin>>x>>y;
-        mx = max(mx,x);
-        z+= y;
-    }
-    long long ans = 0;
-    long long ms = 0;
-    long long temp = z*n;
-    for(int i = 0;i<=temp;i++){
-            if(z>=i){
-                z-=i;
-                ms = i;
-            }else{
-                ans=i;
-                break;
-            }
-    }
-    if(ms == mx){
-        mx++;
-    }
-    cout<<max(ans,mx)<<nline;
-    return;
+// Fast I/O
+#define fastio()                                                               \
+  ios_base::sync_with_stdio(false);                                            \
+  cin.tie(NULL);                                                               \
+  cout.tie(NULL)
+
+// Type Aliases
+using ll = long long;
+using ull = unsigned long long;
+using ld = long double;
+
+// Constants
+const int MOD = 1e9 + 7;
+const ll INF = 1e18;
+
+// Macros
+#define pb push_back
+#define mp make_pair
+#define ff first
+#define ss second
+#define all(x) (x).begin(), (x).end()
+#define rall(x) (x).rbegin(), (x).rend()
+#define sz(x) ((int)(x).size())
+#define nline "\n"
+#define cy cout << "YES\n"
+#define cn cout << "NO\n"
+#define rep(i, a, b) for (int i = (a); i < (b); ++i)
+#define rrep(i, a, b) for (int i = (a); i >= (b); --i)
+
+// Typedefs
+typedef vector<int> vi;
+typedef vector<ll> vll;
+typedef vector<vector<int>> vvi;
+typedef pair<int, int> pii;
+typedef pair<ll, ll> pll;
+typedef vector<pii> vpii;
+typedef vector<pll> vpll;
+
+// vector IO
+template <typename T> istream &operator>>(istream &in, vector<T> &v) {
+  for (auto &x : v)
+    in >> x;
+  return in;
 }
-int main(){
-    int t;
-    cin>>t;
-    while(t--){
-        solve();
+template <typename T> ostream &operator<<(ostream &out, const vector<T> &v) {
+  for (int i = 0; i < sz(v); ++i)
+    out << v[i] << (i == sz(v) - 1 ? "" : " ");
+  return out;
+}
+void solve() {
+  int n;
+  cin >> n;
+  map<ll, ll> p;
+  ll mx = LLONG_MIN;
+  for (int i = 0; i < n; i++) {
+    ll x, y;
+    cin >> x >> y;
+    p[x] = y;
+    mx = max(mx, x);
+  }
+  ll lo = mx, hi = 1e18 + 3;
+  ll res = LLONG_MIN;
+  while (lo <= hi) {
+    ll mid = (hi - lo) / 2 + lo;
+    map<ll, ll> q = p;
+    auto it = q.upper_bound(mid);
+    for (auto i = it; i != end(q); ++i) {
+      q[0] += i->second;
     }
-    return 0;
+    ll cnt = 0;
+    for (int i = mid - 1; i > 0; i--) {
+      if (q.find(i) == q.end()) {
+        cnt++;
+      } else {
+        if (q[i] - cnt <= 0) {
+          cnt++;
+        } else {
+          q[0] += q[i] - 1 - cnt;
+        }
+      }
+    }
+    if (q[0] - cnt >= 0) {
+      lo = mid + 1;
+      res = max(res, mid);
+    } else {
+      hi = mid - 1;
+    }
+  }
+  cout << res << nline;
+  return;
+}
+
+int main() {
+  fastio();
+  cout << fixed << setprecision(10); // Standardize floating point precision
+  int t = 1;
+  cin >> t;
+  while (t--) {
+    solve();
+  }
+  return 0;
 }

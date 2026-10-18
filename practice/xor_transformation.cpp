@@ -1,0 +1,107 @@
+#include <bits/stdc++.h>
+#include <vector>
+using namespace std;
+
+// Fast I/O
+#define fastio()                                                               \
+  ios_base::sync_with_stdio(false);                                            \
+  cin.tie(NULL);                                                               \
+  cout.tie(NULL)
+
+// Type Aliases
+using ll = long long;
+using ull = unsigned long long;
+using ld = long double;
+
+// Constants
+const int MOD = 1e9 + 7;
+const ll INF = 1e18;
+
+// Macros
+#define pb push_back
+#define mp make_pair
+#define ff first
+#define ss second
+#define all(x) (x).begin(), (x).end()
+#define rall(x) (x).rbegin(), (x).rend()
+#define sz(x) ((int)(x).size())
+#define nline "\n"
+#define cy cout << "YES\n"
+#define cn cout << "NO\n"
+#define rep(i, a, b) for (int i = (a); i < (b); ++i)
+#define rrep(i, a, b) for (int i = (a); i >= (b); --i)
+
+// Typedefs
+typedef vector<int> vi;
+typedef vector<ll> vll;
+typedef vector<vector<int>> vvi;
+typedef pair<int, int> pii;
+typedef pair<ll, ll> pll;
+typedef vector<pii> vpii;
+typedef vector<pll> vpll;
+
+// Vector IO
+template <typename T> istream &operator>>(istream &in, vector<T> &v) {
+  for (auto &x : v)
+    in >> x;
+  return in;
+}
+
+template <typename T> ostream &operator<<(ostream &out, const vector<T> &v) {
+  for (int i = 0; i < sz(v); ++i)
+    out << v[i] << (i == sz(v) - 1 ? "" : " ");
+  return out;
+}
+
+void solve() {
+  int n;
+  cin >> n;
+  int q;
+  cin >> q;
+  vector<ll> a(n);
+  for (auto &x : a)
+    cin >> x;
+  vector<vector<ll>> tr(11, vector<ll>(n));
+  tr[0] = a;
+  sort(all(tr[0]));
+  for (int step = 1; step <= 10; step++) {
+    vector<ll> vals;
+    vals.reserve(1LL * n * (n - 1) / 2);
+
+    for (int j = 0; j < n - 1; j++) {
+      for (int k = j + 1; k < n; k++) {
+        vals.push_back(tr[step - 1][j] ^ tr[step - 1][k]);
+      }
+    }
+
+    nth_element(vals.begin(), vals.begin() + n, vals.end());
+    vals.resize(n);
+    sort(all(vals));
+
+    tr[step] = vals;
+  }
+  while (q--) {
+    int x;
+    cin >> x;
+    if (x < 11) {
+      cout << abs(tr[x].back() - tr[x].front()) << nline;
+      continue;
+    } else {
+      cout << abs(tr[10].back() - tr[10].front()) << nline;
+      continue;
+    }
+  }
+}
+
+int main() {
+  fastio();
+  cout << fixed << setprecision(10);
+
+  int t = 1;
+  cin >> t;
+  while (t--) {
+    solve();
+  }
+
+  return 0;
+}
