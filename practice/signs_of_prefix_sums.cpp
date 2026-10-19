@@ -93,6 +93,8 @@ void solve() {
     if (s[i] == '0') {
       if (abs(sum) != 1)
         cost = 2;
+      else
+        sum = 0;
     }
     if (s[i] == '+') {
       if (sum < 0)
@@ -112,26 +114,6 @@ void solve() {
     }
   }
   cout << cost << nline;
-  // int k = 3;
-  // vector<vector<int>> dp(n + 1, vector<int>(2 * k + 1, INF));
-  // dp[0][k] = 0;
-  // for (int i = 0; i < n; i++) {
-  //   for (int j = 0; j < 2 * k + 1; j++) {
-  //     if (dp[i][j] == INF)
-  //       continue;
-  //     auto [l, r] = get_segment(s[i]);
-  //     for (int b = l; b <= r; b++) {
-  //       if (b == j)
-  //         continue;
-  //       dp[i + 1][k] = min(dp[i + 1][k], max(dp[i][j], abs(b - j)));
-  //     }
-  //   }
-  // }
-  // int ans = *min_element(all(dp[n]));
-  // if (ans == INF)
-  //   ans = -1;
-  // cout << ans << nline;
-  // return;
 }
 
 int main() {
